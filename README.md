@@ -1,6 +1,6 @@
 # Taxonomon's FiveM Hotlap Server Resource
 
-This repository contains all client and server required for my hotlap server,
+This repository contains all client and server code required for my hotlap server,
 bundled into a single FiveM server resource.
 
 The entire resource is written in TypeScript, mainly as a personal goal to get
