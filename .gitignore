@@ -1,0 +1,13 @@
+# IntelliJ
+.idea
+build
+
+# Node.js
+node_modules
+package-lock.json
+
+# Env
+.env
+
+# Private stuff
+notes.txt
