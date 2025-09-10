@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", // Target modern JavaScript
+    "module": "ESNext", // Use ES modules
+    "strict": true, // Enable strict type-checking
+    "esModuleInterop": true, // Interoperability for CommonJS modules
+    "skipLibCheck": true, // Skip type checks on library files
+    "moduleDetection": "force",
+    "moduleResolution": "node", // Resolve modules like Node.js
+    "baseUrl": "./", // Resolve paths relative to this directory
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "paths": {
+      "@utilities/*": [
+        "src/utilities/*"
+      ],
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "resolveJsonModule": true, // Allow importing JSON files
+    "isolatedModules": true, // Treat every file as a separate module
+    "outDir": "../build", // Output directory for compiled files
+    "allowSyntheticDefaultImports": true // Allow default imports from modules
+  },
+  "platform": "node",
+  "include": [
+    "./packages/**/*.ts",
+    "C:/Users/Jonas/AppData/Local/FiveM/FiveM.app/citizen/scripting/v8/*.d.ts"
+  ], // Include all files in `src` folder
+  "typeRoots": [
+  ],
+  "exclude": [
+    "node_modules"
+  ] // Exclude these directories
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "source": "../../packages/main/client",
+    "target": "../../build/client.js",
+    "enabled": true
+  },
+  {
+    "source": "../../packages/main/server",
+    "target": "../../build/server.js",
+    "enabled": true
+  }
+]

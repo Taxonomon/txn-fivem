@@ -1,0 +1,17 @@
+[
+  {
+    "directory": true,
+    "source": "../../build",
+    "target": "D:/FiveM-Hotlapping-Server/data/resources/txn/src"
+  },
+  {
+    "directory": true,
+    "source": "../../static",
+    "target": "D:/FiveM-Hotlapping-Server/data/resources/txn/static"
+  },
+  {
+    "directory": false,
+    "source": "../../__resource.lua",
+    "target": "D:/FiveM-Hotlapping-Server/data/resources/txn/__resource.lua"
+  }
+]
