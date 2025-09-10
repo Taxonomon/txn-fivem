@@ -1,16 +1,6 @@
-import {CppsstType} from "./cppsst.ts";
 import {CpbsType} from "./cpbs.ts";
-
-export type Vector2 = {
-  x: number;
-  y: number;
-};
-
-export type Vector3 = {
-  x: number,
-  y: number,
-  z: number
-};
+import {CppsstType} from "./cppsst.ts";
+import {Vector3} from "../../util/common/vector.ts";
 
 export type Prop = {
   hash: number,

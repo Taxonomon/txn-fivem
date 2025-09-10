@@ -53,6 +53,7 @@ async function handleHotlapCommand(args: string[]) {
   if (isNaN(Number(args[0])) && ('quit' === args[0] || 'stop' === args[0])) {
     await quitHotlapSession();
   } else if (!isNaN(Number(args[0]))) {
+    await quitHotlapSession();
     await initializeHotlapSession(Number(args[0]));
   } else {
     log.warn(

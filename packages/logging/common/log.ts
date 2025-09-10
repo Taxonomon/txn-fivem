@@ -1,5 +1,3 @@
-import {LOG_EVENTS} from "./event";
-
 export const CHAT_COLORS = {
   // All other colors not listed are different between client and server, or just white.
   RED: '^1',

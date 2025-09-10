@@ -4,9 +4,9 @@ import {ConsoleLogger} from "../../../logging/common/log";
 import {EVENTS} from "../../common/event";
 import {Track, TrackMetadata} from "../../common/hotlap/type";
 import {CachedTrack, HotlappingPlayer} from "./type";
-import {parseTrack} from "./parse/track";
 import {PACKAGE_NAME} from "../../common/package.ts";
 import {logErrorToClient, logInfoToClient} from "../../../logging/server/log.ts";
+import {condenseRockstarTrack} from "../../../track/server/condense.ts";
 
 
 const hotlapState = new ServerHotlapState();
@@ -33,7 +33,7 @@ onNet(EVENTS.HOTLAP.TRACK.REQUESTED, (trackId: number) => {
       const rawTrackJson = JSON.parse(rawTrackString);
 
       log.trace(`Loaded '${rawTrackFileName}'? -> ${!isUndefined(rawTrackJson)}`);
-      const parsedTrack = parseTrack(rawTrackJson);
+      const parsedTrack = condenseRockstarTrack(rawTrackJson);
 
       hotlapState.cachedTracks.push({
         trackId: trackId,
@@ -123,6 +123,8 @@ onNet(EVENTS.HOTLAP.TRACK.REQUESTED, (trackId: number) => {
 });
 
 onNet(EVENTS.HOTLAP.QUIT, () => {
+  // TODO also trigger this when client quits without quitting their hotlap session first
+  //  (even though client always implicitly quits their session first when initializing a new one)
   const playerId = source;
   const lengthBeforePurge = hotlapState.playersCurrentlyHotlapping.length;
 
