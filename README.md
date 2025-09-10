@@ -20,13 +20,13 @@ Due to the nature of bundling TypeScript code into JavaScript, all supposedly
 shared code already gets transpiled and added to the respective scripts, making
 shared scripts redundant.
 
-This is why the main package structure for each package splits into
+This is why the main package structure for each package splits into:
 
 - client
 - server
 - common
 
-whereas common holds all code that would otherwise land in a shared script.
+whereas `common` holds all code that would otherwise land in a shared script.
 
 Here's a rundown of all current packages and their responsibilities:
 
