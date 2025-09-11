@@ -1,4 +1,4 @@
-import {Track} from "../../common/hotlap/type.ts";
+import {Track} from "../common/hotlap/type.ts";
 
 export type CachedTrack = {
   trackId: number,

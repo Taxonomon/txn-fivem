@@ -1,25 +1,26 @@
 import {ClientHotlapState, HotlapStatus} from "./state.ts";
-import {EVENTS} from "../../common/event.ts";
+import {EVENTS} from "../common/event.ts";
 import {
   Fixture,
   PlaceableProp,
   PrimaryCheckpoint,
   TrackMetadata,
   Vector3
-} from "../../common/hotlap/type.ts";
-import {distanceBetweenVector3s, isEntityWithinTargetDistance, isUndefined, wait} from "../../common/util.ts";
-import {placeDynamicProp, placeStaticProp, hideFixture, unhideFixture, removeProp} from "./prop";
-import {CHECKPOINT_DEFAULTS, FIXTURE_REMOVAL_DEFAULTS, PROP_PLACEMENT_DEFAULTS} from "./default";
+} from "../common/hotlap/type.ts";
+import {distanceBetweenVector3s, isEntityWithinTargetDistance, isUndefined, wait} from "../common/util.ts";
 import {
+  CHECKPOINT_DEFAULTS,
   drawCheckpointBlip,
   drawCheckpointHolo,
   removeCheckpointBlip,
   removeCheckpointHolo,
-} from "./checkpoint";
-import {COMMANDS} from "../../common/command";
-import {ConsoleLogger} from "../../../logging/common/log.ts";
-import {PACKAGE_NAME} from "../../common/package.ts";
-import {startDisablingTraffic, stopDisablingTraffic} from "../../../traffic/client/traffic.ts";
+} from "../../track/client/checkpoint.ts";
+import {COMMANDS} from "../common/command.ts";
+import {ConsoleLogger} from "../../logging/common/log.ts";
+import {PACKAGE_NAME} from "../common/package.ts";
+import {startDisablingTraffic, stopDisablingTraffic} from "../../traffic/client/traffic.ts";
+import {placeProp, PROP_PLACEMENT_DEFAULTS, removeProp} from "../../track/client/prop.ts";
+import {FIXTURE_REMOVAL_DEFAULTS, hideFixture, unhideFixture} from "../../track/client/fixture.ts";
 
 // TODO in case a player spawns onto a custom track, the props in immediate radius of the spawn point need to
 //  be loaded and placed first
@@ -262,7 +263,7 @@ async function startUpdatingStaticPropsWithinPlayerRadius(intervalMs: number, de
 
         if (propNeedsToBePlaced) {
           try {
-            prop.ref = await placeStaticProp(prop);
+            prop.ref = await placeProp(prop);
             prop.placed = true;
             log.trace(
               `Placed static prop (hash=${prop.hash})`
@@ -303,7 +304,7 @@ async function startUpdatingDynamicPropsWithinPlayerRadius(intervalMs: number, d
 
         if (propNeedsToBePlaced) {
           try {
-            prop.ref = await placeDynamicProp(prop);
+            prop.ref = await placeProp(prop);
             prop.placed = true;
             log.trace(
               `Placed dynamic prop (hash=${prop.hash})`

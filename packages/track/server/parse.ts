@@ -2,7 +2,6 @@ import {Fixture, PlaceableProp, PrimaryCheckpoint, Track} from "../common/track.
 import {ConsoleLogger} from "../../logging/common/log.ts";
 import {PACKAGE_NAME} from "../common/package.ts";
 import {CPPSST_TYPES, CppsstType} from "../../hotlap/common/hotlap/cppsst.ts";
-import {FIXTURE_REMOVAL_DEFAULTS} from "../../hotlap/client/hotlap/default.ts";
 import {
   CPBS1_CHECKPOINT_AIR,
   CPBS1_CHECKPOINT_AIR_SECONDARY,
@@ -10,6 +9,7 @@ import {
   CpbsType
 } from "../common/cpbs.ts";
 import {isBitSet} from "../../util/common/util.ts";
+import {FIXTURE_REMOVAL_DEFAULTS} from "../client/fixture.ts";
 
 const log = new ConsoleLogger(PACKAGE_NAME);
 
@@ -32,7 +32,7 @@ const PARSE_DEFAULTS = {
   }
 };
 
-export function condenseRockstarTrack(rockstarTrackJson: any): Track {
+export function parseRockstarTrack(rockstarTrackJson: any): Track {
   if (undefined === rockstarTrackJson) {
     throw new Error('R* track JSON is undefined');
   }

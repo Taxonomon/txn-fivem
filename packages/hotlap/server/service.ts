@@ -1,12 +1,12 @@
-import {isUndefined} from "../../common/util";
-import {ServerHotlapState} from "./state";
-import {ConsoleLogger} from "../../../logging/common/log";
-import {EVENTS} from "../../common/event";
-import {Track, TrackMetadata} from "../../common/hotlap/type";
-import {CachedTrack, HotlappingPlayer} from "./type";
-import {PACKAGE_NAME} from "../../common/package.ts";
-import {logErrorToClient, logInfoToClient} from "../../../logging/server/log.ts";
-import {condenseRockstarTrack} from "../../../track/server/condense.ts";
+import {isUndefined} from "../common/util.ts";
+import {ServerHotlapState} from "./state.ts";
+import {ConsoleLogger} from "../../logging/common/log.ts";
+import {EVENTS} from "../common/event.ts";
+import {Track, TrackMetadata} from "../common/hotlap/type.ts";
+import {CachedTrack, HotlappingPlayer} from "./type.ts";
+import {PACKAGE_NAME} from "../common/package.ts";
+import {logErrorToClient, logInfoToClient} from "../../logging/server/log.ts";
+import {parseRockstarTrack} from "../../track/server/parse.ts";
 
 
 const hotlapState = new ServerHotlapState();
@@ -33,7 +33,7 @@ onNet(EVENTS.HOTLAP.TRACK.REQUESTED, (trackId: number) => {
       const rawTrackJson = JSON.parse(rawTrackString);
 
       log.trace(`Loaded '${rawTrackFileName}'? -> ${!isUndefined(rawTrackJson)}`);
-      const parsedTrack = condenseRockstarTrack(rawTrackJson);
+      const parsedTrack = parseRockstarTrack(rawTrackJson);
 
       hotlapState.cachedTracks.push({
         trackId: trackId,

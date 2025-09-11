@@ -1,4 +1,4 @@
-import {CachedTrack, HotlappingPlayer} from "./type";
+import {CachedTrack, HotlappingPlayer} from "./type.ts";
 
 export class ServerHotlapState {
   cachedTracks: CachedTrack[] = [];

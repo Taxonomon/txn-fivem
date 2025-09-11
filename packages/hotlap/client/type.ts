@@ -1,4 +1,4 @@
-import {Fixture, PlaceableProp, PrimaryCheckpoint} from "../../common/hotlap/type";
+import {Fixture, PlaceableProp, PrimaryCheckpoint} from "../common/hotlap/type.ts";
 
 export type NextCheckpointState = PrimaryCheckpoint & {
   blip: number;

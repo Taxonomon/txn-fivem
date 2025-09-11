@@ -1,5 +1,5 @@
-import {TrackMetadata} from "../../common/hotlap/type.ts";
-import {CurrentCheckpointState, FixtureState, NextCheckpointState, PropState} from "./type";
+import {TrackMetadata} from "../common/hotlap/type.ts";
+import {CurrentCheckpointState, FixtureState, NextCheckpointState, PropState} from "./type.ts";
 
 export enum HotlapStatus {
   FREE_MODE,

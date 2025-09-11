@@ -1,9 +1,9 @@
 import {COMMANDS} from "../../hotlap/common/command.ts";
-import {waitForModelToLoad} from "../../hotlap/client/util.ts";
 import {CLIENT_RESOURCE_EVENTS} from "../../util/common/event.ts";
 import {ConsoleLogger} from "../../logging/common/log.ts";
 import {PACKAGE_NAME} from "../common/package.ts";
 import {clientVehicleState} from "./state.ts";
+import {waitForModelToLoad} from "../../util/client/util.ts";
 
 const log = new ConsoleLogger(PACKAGE_NAME);
 

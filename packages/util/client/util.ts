@@ -1,8 +1,4 @@
-import {ConsoleLogger} from "../../logging/common/log";
-import {wait} from "../common/util";
-import {PACKAGE_NAME} from "../common/package.ts";
-
-const log = new ConsoleLogger(PACKAGE_NAME);
+import {wait} from "../common/util.ts";
 
 export async function waitForModelToLoad(hash: number) {
   let secondsPassed = Timera();
