@@ -4,8 +4,26 @@ import {ConsoleLogger} from "../../logging/common/log.ts";
 import {PACKAGE_NAME} from "../common/package.ts";
 import {clientVehicleState} from "./state.ts";
 import {waitForModelToLoad} from "../../util/client/util.ts";
+import {updateUIGear, updateUIRpm, updateUISpeed} from "../../ui/client/ui.ts";
+import {wait} from "../../util/common/util.ts";
+import {logDebugToServer} from "../../logging/client/log.ts";
 
 const log = new ConsoleLogger(PACKAGE_NAME);
+
+const SPEED_UNITS = {
+  METERS_PER_SECOND: 'mps',
+  KILOMETERS_PER_HOUR: 'kmh',
+  MILES_PER_HOUR: 'mph'
+};
+
+const SPEED_UNIT_CONVERSION_RATIO = {
+  METERS_PER_SECOND: {
+    TO: {
+      KILOMETERS_PER_HOUR: 3.6,
+      MILES_PER_HOUR: 2.236936
+    }
+  }
+};
 
 on(CLIENT_RESOURCE_EVENTS.ON_RESOURCE_START, (resourceName: string) => {
   if (resourceName === GetCurrentResourceName()) {
@@ -18,6 +36,59 @@ RegisterCommand(
   async (source: number, args: string[]) => handleCarCommand(args),
   false
 );
+
+// start fetching vehicle stats each frame
+clientVehicleState.ticks.stats = setTick(async () => {
+  updateVehicleStats();
+  await wait(0);
+});
+
+function updateVehicleStats() {
+  // speed
+  const speedMetersPerSecond = GetEntitySpeed(PlayerPedId());
+  const speedConverted = convertMetersPerSecondTo(speedMetersPerSecond, SPEED_UNITS.KILOMETERS_PER_HOUR);
+  clientVehicleState.speedMetersPerSecond = speedMetersPerSecond;
+
+  // from here on, the vehicle is needed to determine the rest of the values
+  const vehicleRef = GetVehiclePedIsIn(PlayerPedId(), false);
+  if (vehicleRef === 0) {
+    clientVehicleState.speedMetersPerSecond = undefined;
+    updateUISpeed(speedConverted, false, SPEED_UNITS.KILOMETERS_PER_HOUR.toString());
+    updateUIRpm(-1, false);
+    updateUIGear(-1, false);
+    return;
+  }
+
+  // reversing
+  const isReversing = GetVehicleThrottleOffset(vehicleRef) < 0;
+  updateUISpeed(speedConverted, isReversing, SPEED_UNITS.KILOMETERS_PER_HOUR.toString());
+
+  // rpm
+  const value = GetVehicleCurrentRpm(vehicleRef) * 10000;
+  clientVehicleState.speedMetersPerSecond = value;
+  updateUIRpm(value, true);
+
+  // gear
+  let gear: number | 'R' | 'N' = GetVehicleCurrentGear(vehicleRef);
+  if (undefined === gear || 0 === gear) {
+    gear = isReversing ? 'R' : 'N';
+  }
+  updateUIGear(gear, true);
+}
+
+function convertMetersPerSecondTo(value: number, unit: string) {
+  switch (unit) {
+    case SPEED_UNITS.KILOMETERS_PER_HOUR: {
+      return value * SPEED_UNIT_CONVERSION_RATIO.METERS_PER_SECOND.TO.KILOMETERS_PER_HOUR;
+    }
+    case SPEED_UNITS.MILES_PER_HOUR: {
+      return value * SPEED_UNIT_CONVERSION_RATIO.METERS_PER_SECOND.TO.MILES_PER_HOUR;
+    }
+    default: {
+      return value;
+    }
+  }
+}
 
 async function handleCarCommand(args: string[]) {
   if (args.length === 0) {
@@ -86,4 +157,12 @@ function deleteClientsCurrentVehicle() {
   DeleteVehicle(vehicleRefToDelete);
 
   log.info(`Deleted current and/or previous vehicle(s)`);
+}
+
+function isClientCurrentlyInVehicle() {
+  return 0 !== GetVehiclePedIsIn(PlayerPedId(), false);
+}
+
+function isReversing(vehicleRef: number) {
+  return GetVehicleThrottleOffset(vehicleRef) < 0;
 }

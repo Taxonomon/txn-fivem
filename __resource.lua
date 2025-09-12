@@ -10,7 +10,12 @@ client_scripts { 'src/client.js' }
 shared_scripts { 'src/shared.js' }
 server_scripts { 'src/server.js' }
 
+ui_page 'static/ui/index.html'
+
 files {
-	'static/**.json',
-	'static/**.yaml'
+	'static/*',
+	'static/ui/index.html',
+	'static/ui/style.css',
+	'static/ui/script.js',
+	'static/ui/icon/*'
 }

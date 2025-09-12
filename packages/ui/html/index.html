@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" type="text/css" href="https://cfx-nui-txn/static/ui/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cfx-nui-txn/static/ui/script.js" type="text/javascript"></script>
+  </head>
+  <body class="font-figtree font-700 font-size-24 font-white">
+    <div id="interface-direct">
+      <div id="times-top-right" class="bg-dark pad-tb-10 pad-lr-20 bor-rad-tl-20 bor-rad-br-20">
+        <div id="times-last" class="mar-b-10">
+          <div id="times-last-label" class="font-size-12">
+            last
+          </div>
+          <span id="times-last-time">
+            --
+          </span>
+        </div>
+        <div id="times-average" class="mar-b-10">
+          <div id="times-average-label" class="font-size-12">
+            average
+          </div>
+          <span id="times-average-time">
+            --
+          </span>
+        </div>
+        <div id="times-best" class="mar-b-10">
+          <div id="times-best-label" class="font-size-12">
+            best
+          </div>
+          <span id="times-best-time">
+            1:23.987
+          </span>
+        </div>
+        <div id="times-record">
+          <div id="times-record-label" class="font-size-12">
+            record
+          </div>
+          <div id="times-record-time">
+            1:23.168
+          </div>
+        </div>
+      </div>
+      <span id="timer-bottom-center" class="bg-dark pad-tb-10 pad-lr-20 bor-rad-tl-20 bor-rad-br-20">
+        1:24.567
+      </span>
+      <div id="hud-bottom-right"
+           class="bg-dark min-width-200 pad-tb-10 pad-lr-20 bor-rad-tl-20 bor-rad-br-20 flex flex-direction-col flex-right-hor">
+        <div id="hut-bottom-right-speed" class="flex flex-direction-row flex-right-hor">
+          <div>
+            <span id="hud-bottom-right-speed-value" class="">N/A</span>
+          </div>
+          <span>&nbsp;</span>
+          <div>
+            <span id="hud-bottom-right-speed-unit" class="font-size-12">N/A</span>
+          </div>
+        </div>
+        <div id="hud-bottom-right-secondary" class="flex pad-t-5">
+          <div id="hud-bottom-right-secondary-rpm" class="flex flex-center-ver pad-r-20">
+            <span id="hut-bottom-right-secondary-rpm-value" class="pad-r-10">N/A</span>
+            <img src="https://cfx-nui-txn/static/ui/icon/tachometer.svg" width="24" height="24"/>
+          </div>
+          <div id="hud-bottom-right-secondary-gear" class="flex flex-center-ver">
+            <span id="hud-bottom-right-secondary-gear-value" class="pad-r-10">N/A</span>
+            <img src="https://cfx-nui-txn/static/ui/icon/transmission.svg" width="24" height="24"/>
+          </div>
+        </div>
+      </div>
+      <div id="cp-split" class="center-hor flex flex-direction-col flex-center-ver font-size-20">
+        <div id="cp-split-primary" class="flex">
+          <span id="cp-split-number" class="bor-rad-tl-20 bg-mid pad-tb-10 pad-lr-20">
+            #4
+          </span>
+          <span id="cp-split-time" class="bg-dark pad-tb-10 pad-lr-20">
+            45:678
+          </span>
+          <span id="cp-split-delta" class="bor-rad-br-20 bg-mid bg-blue pad-tb-10 pad-lr-20">
+            -0.607
+          </span>
+        </div>
+        <div id="cp-split-secondary" class="pad-t-10 flex font-size-12">
+          <div id="cp-split-gear"
+               class="bg-mid bor-rad-tl-20 pad-tb-10 pad-lr-14 flex flex-center-ver">
+            <img src="https://cfx-nui-txn/static/ui/icon/transmission.svg" width="16" height="16" class="pad-r-5"/>
+            <span id="cp-split-gear-value">3</span>
+          </div>
+          <div id="cp-split-rpm" class="bg-dark pad-tb-10 pad-lr-14 flex flex-center-ver">
+            <img src="https://cfx-nui-txn/static/ui/icon/tachometer.svg" width="16" height="16" class="pad-r-5"/>
+            <span id="cp-split-rpm-value">4567</span>
+          </div>
+          <div id="cp-split-speed"
+               class="bg-mid bg-red pad-tb-10 pad-lr-14 bor-rad-br-20 flex flex-center-ver">
+            250 kmh
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--
+    <img
+      src="https://media.discordapp.net/attachments/1273721666140377152/1416081944524886056/FiveM_GTAProcess_W7M1d7yBnA.jpg?ex=68c58c95&is=68c43b15&hm=b99e56ed00e976697c7c8441712596f9b8a09b7da5732b90f1226e7794da087c&=&format=webp&width=2130&height=1198" width="100%" height="100%"/>
+      -->
+  </body>
+</html>

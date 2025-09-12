@@ -13,5 +13,10 @@
     "directory": false,
     "source": "../../__resource.lua",
     "target": "D:/FiveM-Hotlapping-Server/data/resources/txn/__resource.lua"
+  },
+  {
+    "directory": true,
+    "source": "../../packages/ui/html",
+    "target": "D:/FiveM-Hotlapping-Server/data/resources/txn/static/ui"
   }
 ]

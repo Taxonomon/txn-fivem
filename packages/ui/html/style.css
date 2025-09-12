@@ -1,0 +1,202 @@
+/* fonts */
+
+.font-figtree {
+    font-family: "Figtree", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.font-white {
+    color: rgba(255, 255, 255, 1);
+}
+
+.font-700 {
+    font-weight: 700;
+}
+
+.font-size-8 {
+    font-size: 8pt;
+}
+
+.font-size-12 {
+    font-size: 12pt;
+}
+
+.font-size-16 {
+    font-size: 16pt;
+}
+
+.font-size-20 {
+    font-size: 20pt;
+}
+
+.font-size-24 {
+    font-size: 24pt;
+}
+
+.font-size-32 {
+    font-size: 32pt;
+}
+
+/* colors */
+
+.bg-dark {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.bg-mid {
+    background-color: rgba(75, 75, 75, 0.6);
+}
+
+.bg-blue {
+    background-color: rgba(30, 30, 228, 0.6);
+}
+
+.bg-red {
+    background-color: rgba(255, 66, 66, 0.6);
+}
+
+/* padding */
+
+.pad-all-10 {
+    padding: 10px;
+}
+
+.pad-all-20 {
+    padding: 20px;
+}
+
+.pad-tb-10 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.pad-lr-14 {
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.pad-lr-20 {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.pad-r-5 {
+    padding-right: 5px;
+}
+
+.pad-r-10 {
+    padding-right: 10px;
+}
+
+.pad-r-20 {
+    padding-right: 20px;
+}
+
+.pad-t-5 {
+    padding-top: 5px;
+}
+
+.pad-t-10 {
+    padding-top: 10px;
+}
+
+/* position */
+
+.pos-absolute {
+    position: absolute;
+}
+
+.center-hor {
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.align-right {
+    float: right;
+}
+
+/* margin */
+
+.mar-b-10 {
+    margin-bottom: 10px;
+}
+
+/* flex box */
+
+.flex {
+    display: flex;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+
+.flex-gap-row-10 {
+    row-gap: 10px;
+}
+
+.flex-center-ver {
+    align-items: center;
+}
+
+.flex-center-hor {
+    justify-content: center;
+}
+
+.flex-right-hor {
+    justify-content: flex-end;
+}
+
+.flex-direction-row {
+    flex-direction: row;
+}
+
+.flex-direction-col {
+    flex-direction: column;
+}
+
+/* border radius */
+
+.bor-rad-tl-20 {
+    border-top-left-radius: 20px;
+}
+
+.bor-rad-br-20 {
+    border-bottom-right-radius: 20px;
+}
+
+/* height & width */
+
+.min-width-200 {
+    min-width: 200px;
+}
+
+/* individual components */
+
+#times-top-right {
+    margin: 20px;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+#timer-bottom-center {
+    margin: 20px auto;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+#hud-bottom-right {
+    margin: 20px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+}
+
+#cp-split {
+    position: fixed;
+    top: 25%;
+}
