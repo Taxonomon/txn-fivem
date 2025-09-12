@@ -51,19 +51,19 @@ function updateHudSpeed(value, unit) {
 }
 
 function updateHudRpm(value, inVehicle) {
-  updateHudSecondaryVisibility(inVehicle);
+  hideSecondaryHudIfNotInVehicle(inVehicle);
   const valueElement = document.getElementById(UI_ELEMENT_IDS.HUD.SECONDARY.RPM.VALUE);
   valueElement.textContent = value && valueElement ? value : '';
 }
 
 function updateHudGear(value, inVehicle) {
-  updateHudSecondaryVisibility(inVehicle);
+  hideSecondaryHudIfNotInVehicle(inVehicle);
   const valueElement = document.getElementById(UI_ELEMENT_IDS.HUD.SECONDARY.GEAR.VALUE);
   valueElement.textContent = value && valueElement ? value : '';
 }
 
-function updateHudSecondaryVisibility(inVehicle) {
+function hideSecondaryHudIfNotInVehicle(inVehicle) {
   const hudSecondaryElement = document.getElementById(UI_ELEMENT_IDS.HUD.SECONDARY.DIV);
-  hudSecondaryElement.style.visibility = inVehicle ? 'visible' : 'collapse';
+  hudSecondaryElement.style.display = inVehicle ? 'flex' : 'none';
 }
 
