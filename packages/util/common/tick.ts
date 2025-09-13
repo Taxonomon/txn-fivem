@@ -36,7 +36,7 @@ export class Tick {
    */
   start(handler: Function, intervalMs: number = 0) {
     this.index ??= setTick(async () => {
-      handler();
+      await handler();
       await wait(intervalMs);
     });
     log.trace(`Started tick '${this.name}' (running every ${intervalMs} ms)`);

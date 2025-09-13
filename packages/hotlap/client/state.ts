@@ -9,7 +9,7 @@ export enum HotlapStatus {
   QUITTING
 }
 
-export class TickState {
+class TickState {
   placeStaticPropsNearPlayer = new Tick('place static props near player');
   placeDynamicPropsNearPlayer = new Tick('place dynamic props near player');
   removeFixturesNearPlayer = new Tick('remove fixtures near player');
@@ -17,18 +17,7 @@ export class TickState {
   updateLapTimer = new Tick(`update lap timer`);
 }
 
-export class LapState {
-  // number of the lap the client currently is in
-  currentLap: number = 1;
-
-  // lap times
-  lastLap?: number;
-  averageLap?: number;
-  personalBest?: number;
-  lapRecord?: number;
-}
-
-export class ClientHotlapState {
+class ClientHotlapState {
   status: HotlapStatus = HotlapStatus.FREE_MODE;
   trackId?: number;
   trackMetadata?: TrackMetadata;
@@ -42,11 +31,20 @@ export class ClientHotlapState {
   hasTrackCleanupError: boolean = false;
   playerDistanceToCurrentCp?: number;
   currentlyCleaningUp: boolean = false;
+  checkpointLastTouchedTimestampMs?: number;
   hasAlreadyRequestedNextCheckpoint: boolean = false;
-  lap: LapState = new LapState();
+  numberOfCompletedLaps: number = 0;
+  lapStartedTimestamp?: number;
+  lapTimes: number[] = [];
+  lastLap?: number;
+  averageLap?: number;
+  personalBestLap?: number;
+  lapRecord?: number;
   ticks: TickState = new TickState();
 
   isPlayerNotInFreeMode() {
     return this.status !== HotlapStatus.FREE_MODE;
   }
 }
+
+export const clientHotlapState = new ClientHotlapState();

@@ -127,7 +127,6 @@ export async function drawCheckpointHolo(
 ) {
   const { x, y, z } = cpCoords;
   if (isSecondaryHolo && (x === 0 && y === 0 && z === 0)) {
-    log.debug(`Checkpoint at x=${cpCoords.x}, y=${cpCoords.y}, z=${cpCoords.z} has no secondary holo to draw`);
     return;
   }
 

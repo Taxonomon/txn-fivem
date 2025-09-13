@@ -6,6 +6,10 @@
     font-style: normal;
 }
 
+.font-fira-code {
+    font-family: "Fira Code", sans-serif;
+}
+
 .font-white {
     color: rgba(255, 255, 255, 1);
 }
@@ -203,4 +207,5 @@
 #cp-split {
     position: fixed;
     top: 25%;
+    display: none
 }

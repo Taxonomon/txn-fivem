@@ -2,7 +2,7 @@ class VehicleStateTick {
   stats?: number;
 }
 
-export class ClientVehicleState {
+class ClientVehicleState {
   currentVehicleRef?: number;
   speedMetersPerSecond?: number;
   speedUnit: 'kmh' | 'mph' = 'kmh';

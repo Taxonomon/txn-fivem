@@ -2,7 +2,15 @@ const UI_EVENTS = {
   HUD: {
     SPEED: 'HUD_SPEED',
     RPM: 'HUD_RPM',
-    GEAR: 'HUD_GEAR'
+    GEAR: 'HUD_GEAR',
+    LAP: {
+      TIMER: 'HUD_LAP_TIMER',
+      LAST_LAP: 'HUD_LAP_LAST_LAP',
+      AVERAGE_LAP: 'HUD_LAP_AVERAGE_LAP'
+    }
+  },
+  HOTLAP: {
+    TOGGLE: 'HOTLAP_TOGGLE'
   }
 };
 
@@ -24,7 +32,18 @@ const UI_ELEMENT_IDS = {
       }
     }
   },
-  CURRENT_TIME: 'current-time-bottom-left-value'
+  SYSTEM_TIME: 'system-time-top-right-value',
+  LAP_TIMER: {
+    DIV: 'timer-bottom-center',
+    VALUE: 'timer-bottom-center-value'
+  },
+  LAP_TIMES: {
+    DIV: 'lap-times-top-right',
+    LAST_LAP: 'lap-times-top-right-last-lap-value',
+    AVERAGE_LAP: 'lap-times-top-right-average-lap-value',
+    PERSONAL_BEST: 'lap-times-top-right-personal-best-value',
+    LAP_RECORD: 'lap-times-top-right-lap-record-value'
+  }
 };
 
 window.addEventListener('message', (event) => {
@@ -39,21 +58,35 @@ window.addEventListener('message', (event) => {
     }
     case UI_EVENTS.HUD.GEAR: {
       updateHudGear(event.data.value, event.data.inVehicle);
+      break;
+    }
+    case UI_EVENTS.HUD.LAP.TIMER: {
+      updateLapTimer(event.data.value);
+      break;
+    }
+    case UI_EVENTS.HOTLAP.TOGGLE: {
+      toggleHotlapUIElements(event.data.value);
+      break;
+    }
+    case UI_EVENTS.HUD.LAP.LAST_LAP: {
+      updateLastLap(event.data.value);
+      break;
+    }
+    case UI_EVENTS.HUD.LAP.AVERAGE_LAP: {
+      updateAverageLap(event.data.value);
+      break;
     }
   }
 });
 
 // update current time every second
-console.log(`Starting to display current time every second...`);
 setInterval(() => updateCurrentTimeEverySecond(), 1000);
-updateCurrentTimeEverySecond();
 
 function updateCurrentTimeEverySecond() {
   const timestamp = new Date();
-  adjustTimestampTimezoneOffset(timestamp);
 
   const timestampFormatted = formatTimestamp(timestamp);
-  const timeValueElement = document.getElementById(UI_ELEMENT_IDS.CURRENT_TIME);
+  const timeValueElement = document.getElementById(UI_ELEMENT_IDS.SYSTEM_TIME);
 
   if (timeValueElement !== null) {
     timeValueElement.innerText = timestampFormatted && timeValueElement ? timestampFormatted : 'N/A';
@@ -89,11 +122,24 @@ function formatTimestamp(timestamp) {
   return timestamp.toLocaleString('en-uk');
 }
 
-function adjustTimestampTimezoneOffset(timestamp) {
-  const timezoneOffset = timestamp.getTimezoneOffset() / 60;
-  timestamp.setHours(
-    timezoneOffset < 0
-      ? timestamp.getHours() - timezoneOffset
-      : timestamp.getHours() + timezoneOffset
-  );
+function updateLapTimer(value) {
+  const valueElement = document.getElementById(UI_ELEMENT_IDS.LAP_TIMER.VALUE);
+  if (valueElement && value) {
+    valueElement.innerText = value
+  }
+}
+
+function toggleHotlapUIElements(show) {
+  document.getElementById(UI_ELEMENT_IDS.LAP_TIMES.DIV).style.display = show ? 'block' : 'none';
+  document.getElementById(UI_ELEMENT_IDS.LAP_TIMER.DIV).style.display = show ? 'flex' : 'none';
+}
+
+function updateLastLap(value) {
+  const valueElement = document.getElementById(UI_ELEMENT_IDS.LAP_TIMES.LAST_LAP);
+  valueElement.textContent = value && valueElement ? value : '--';
+}
+
+function updateAverageLap(value) {
+  const valueElement = document.getElementById(UI_ELEMENT_IDS.LAP_TIMES.AVERAGE_LAP);
+  valueElement.textContent = value && valueElement ? value : '--';
 }
