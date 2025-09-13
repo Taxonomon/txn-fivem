@@ -1,4 +1,3 @@
-import {COMMANDS} from "../../hotlap/common/command.ts";
 import {CLIENT_RESOURCE_EVENTS} from "../../util/common/event.ts";
 import {ConsoleLogger} from "../../logging/common/log.ts";
 import {PACKAGE_NAME} from "../common/package.ts";
@@ -6,7 +5,7 @@ import {clientVehicleState} from "./state.ts";
 import {waitForModelToLoad} from "../../util/client/util.ts";
 import {updateUIGear, updateUIRpm, updateUISpeed} from "../../ui/client/ui.ts";
 import {wait} from "../../util/common/util.ts";
-import {logDebugToServer} from "../../logging/client/log.ts";
+import {VEHICLE_COMMANDS} from "../common/command.ts";
 
 const log = new ConsoleLogger(PACKAGE_NAME);
 
@@ -32,7 +31,7 @@ on(CLIENT_RESOURCE_EVENTS.ON_RESOURCE_START, (resourceName: string) => {
 });
 
 RegisterCommand(
-  COMMANDS.CAR,
+  VEHICLE_COMMANDS.CAR,
   async (source: number, args: string[]) => handleCarCommand(args),
   false
 );
@@ -92,15 +91,16 @@ function convertMetersPerSecondTo(value: number, unit: string) {
 
 async function handleCarCommand(args: string[]) {
   if (args.length === 0) {
-    log.error(`Cannot execute command '${COMMANDS.CAR}': no arguments provided`);
+    log.error(`Cannot execute command '${VEHICLE_COMMANDS.CAR}': no arguments provided`);
     return;
   } else if (args.length > 1) {
-    log.error(`Cannot execute command '${COMMANDS.CAR}': too many arguments provided (expected 1, found ${args.length})`);
+    log.error(`Cannot execute command '${VEHICLE_COMMANDS.CAR}': too many arguments provided (expected 1, found ${args.length})`);
     return;
   }
 
   const pedId = PlayerPedId();
   const heading = GetEntityHeading(PlayerPedId());
+  const [ x, y, z ] = GetOffsetFromEntityInWorldCoords(pedId, 0.0, 0.0, 0.0);
 
   if (args[0] === 'delete' && IsPedInAnyVehicle(pedId, false)) {
     deleteClientsCurrentVehicle();
@@ -110,13 +110,13 @@ async function handleCarCommand(args: string[]) {
 
   // all vanilla car ids: https://docs.fivem.net/docs/game-references/vehicle-references/vehicle-models/
   const vehicleId = args[0];
+  const vehicleHash = GetHashKey(vehicleId);
 
   try {
-    const vehicleHash = GetHashKey(vehicleId);
-    const [ x, y, z ] = GetOffsetFromEntityInWorldCoords(pedId, 0.0, 0.0, 0.0);
+    log.debug(`Loading vehicle '${vehicleId}'...`);
+    await waitForModelToLoad(vehicleHash);
 
     deleteClientsCurrentVehicle();
-    await waitForModelToLoad(vehicleHash);
 
     const vehicleRef = CreateVehicle(
       vehicleHash,
@@ -127,6 +127,11 @@ async function handleCarCommand(args: string[]) {
       true,
       true
     );
+
+    if (0 === vehicleRef) {
+      log.error(`Invalid vehicle id '${vehicleId}'`);
+      return;
+    }
 
     SetVehicleEngineOn(
       vehicleRef,
@@ -139,8 +144,8 @@ async function handleCarCommand(args: string[]) {
 
     clientVehicleState.currentVehicleRef = vehicleRef;
     log.info(`Spawned '${GetDisplayNameFromVehicleModel(vehicleHash)}'`);
-  } catch (error) {
-    log.error(`Failed to spawn vehicle '${vehicleId}': ${error}`);
+  } catch (error: any) {
+    log.error(`Failed to spawn vehicle '${vehicleId}': ${error.message}`);
   }
 }
 
@@ -157,12 +162,4 @@ function deleteClientsCurrentVehicle() {
   DeleteVehicle(vehicleRefToDelete);
 
   log.info(`Deleted current and/or previous vehicle(s)`);
-}
-
-function isClientCurrentlyInVehicle() {
-  return 0 !== GetVehiclePedIsIn(PlayerPedId(), false);
-}
-
-function isReversing(vehicleRef: number) {
-  return GetVehicleThrottleOffset(vehicleRef) < 0;
 }

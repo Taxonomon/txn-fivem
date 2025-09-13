@@ -1,12 +1,11 @@
-import {isUndefined} from "../common/util.ts";
 import {ServerHotlapState} from "./state.ts";
 import {ConsoleLogger} from "../../logging/common/log.ts";
 import {EVENTS} from "../common/event.ts";
-import {Track, TrackMetadata} from "../common/hotlap/type.ts";
 import {CachedTrack, HotlappingPlayer} from "./type.ts";
 import {PACKAGE_NAME} from "../common/package.ts";
 import {logErrorToClient, logInfoToClient} from "../../logging/server/log.ts";
 import {parseRockstarTrack} from "../../track/server/parse.ts";
+import {Track, TrackMetadata} from "../../track/common/track.ts";
 
 
 const hotlapState = new ServerHotlapState();
@@ -22,7 +21,7 @@ onNet(EVENTS.HOTLAP.TRACK.REQUESTED, (trackId: number) => {
     entry.trackId === trackId
   );
 
-  if (!isUndefined(cachedTrack)) {
+  if (undefined !== cachedTrack) {
     requestedTrack = cachedTrack.track;
     log.debug(`Loaded track ${trackId} from server cache`);
   } else {
@@ -32,7 +31,7 @@ onNet(EVENTS.HOTLAP.TRACK.REQUESTED, (trackId: number) => {
       const rawTrackString = LoadResourceFile(GetCurrentResourceName(), rawTrackFileName);
       const rawTrackJson = JSON.parse(rawTrackString);
 
-      log.trace(`Loaded '${rawTrackFileName}'? -> ${!isUndefined(rawTrackJson)}`);
+      log.trace(`Loaded '${rawTrackFileName}'? -> ${undefined !== rawTrackJson}`);
       const parsedTrack = parseRockstarTrack(rawTrackJson);
 
       hotlapState.cachedTracks.push({
@@ -116,7 +115,6 @@ onNet(EVENTS.HOTLAP.TRACK.REQUESTED, (trackId: number) => {
     JSON.stringify(requestedTrack.fixtures)
   );
 
-  // 5. the first two checkpoints to load
   // the client has to answer to all these events to confirm it is ready
   // 6. finally, the position to spawn the client in
   // (car will be completely ignored for now)
@@ -125,13 +123,14 @@ onNet(EVENTS.HOTLAP.TRACK.REQUESTED, (trackId: number) => {
 onNet(EVENTS.HOTLAP.QUIT, () => {
   // TODO also trigger this when client quits without quitting their hotlap session first
   //  (even though client always implicitly quits their session first when initializing a new one)
+  //  (just as a cleanup as to not store leftover hotlap sessions)
+
   const playerId = source;
   const lengthBeforePurge = hotlapState.playersCurrentlyHotlapping.length;
 
-  const playersCurrentlyHotlappingWithoutQuittingPlayer = hotlapState.playersCurrentlyHotlapping
+  // remove player's hotlap session from state
+  hotlapState.playersCurrentlyHotlapping = hotlapState.playersCurrentlyHotlapping
     .filter((hotlappingPlayer) => hotlappingPlayer.playerId !== playerId);
-
-  hotlapState.playersCurrentlyHotlapping = playersCurrentlyHotlappingWithoutQuittingPlayer;
 
   if (lengthBeforePurge === hotlapState.playersCurrentlyHotlapping.length) {
     log.info(`${GetPlayerName(playerId)} emitted event '${EVENTS.HOTLAP.QUIT}' without being in a hotlap session`);
@@ -145,7 +144,7 @@ onNet(EVENTS.HOTLAP.ACTIVE.NEXT_CHECKPOINT.REQUESTED, () => {
   const hotlappingPlayer = hotlapState.playersCurrentlyHotlapping
     .find((hotlappingPlayer) => hotlappingPlayer.playerId === playerId);
 
-  if (isUndefined(hotlappingPlayer)) {
+  if (undefined === hotlappingPlayer) {
     log.warn(
       `Could not identify server-side hotlap session of '${GetPlayerName(playerId)}' (session is undefined)`
     );
@@ -156,7 +155,7 @@ onNet(EVENTS.HOTLAP.ACTIVE.NEXT_CHECKPOINT.REQUESTED, () => {
   const cachedTrack = hotlapState.cachedTracks
     .find((cachedTrack) => cachedTrack.trackId === hotlappingPlayer?.trackId);
 
-  if (isUndefined(cachedTrack) || isUndefined(cachedTrack?.track)) {
+  if (undefined === cachedTrack || undefined === cachedTrack?.track) {
     log.warn(
       `Could not find track ${hotlappingPlayer?.trackId} of current hotlap session`
       + `of '${GetPlayerName(playerId)}' (track is undefined)`
@@ -195,10 +194,12 @@ onNet(EVENTS.HOTLAP.ACTIVE.NEXT_CHECKPOINT.REQUESTED, () => {
   log.debug(`Will send '${GetPlayerName(playerId)}' CP ${cpIndexToFetch}`);
   let nextCp = cachedTrack?.track.checkpoints[cpIndexToFetch];
 
-  if (isUndefined(nextCp)) {
+  if (undefined === nextCp) {
     // if still undefined, then the cp could not be loaded
-    log.warn(`Could not load next checkpoint for '${GetPlayerName(playerId)}'`
-      + `hotlap session (checkpoint is undefined)`);
+    log.warn(
+      `Could not load next checkpoint for '${GetPlayerName(playerId)}'`
+      + `hotlap session (checkpoint is undefined)`
+    );
     // TODO tell client that the next cp isn't available
     return;
   }

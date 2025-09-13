@@ -1,26 +1,21 @@
 import {ClientHotlapState, HotlapStatus} from "./state.ts";
 import {EVENTS} from "../common/event.ts";
 import {
-  Fixture,
-  PlaceableProp,
-  PrimaryCheckpoint,
-  TrackMetadata,
-  Vector3
-} from "../common/hotlap/type.ts";
-import {distanceBetweenVector3s, isEntityWithinTargetDistance, isUndefined, wait} from "../common/util.ts";
-import {
   CHECKPOINT_DEFAULTS,
   drawCheckpointBlip,
   drawCheckpointHolo,
   removeCheckpointBlip,
   removeCheckpointHolo,
 } from "../../track/client/checkpoint.ts";
-import {COMMANDS} from "../common/command.ts";
 import {ConsoleLogger} from "../../logging/common/log.ts";
 import {PACKAGE_NAME} from "../common/package.ts";
 import {startDisablingTraffic, stopDisablingTraffic} from "../../traffic/client/traffic.ts";
 import {placeProp, PROP_PLACEMENT_DEFAULTS, removeProp} from "../../track/client/prop.ts";
 import {FIXTURE_REMOVAL_DEFAULTS, hideFixture, unhideFixture} from "../../track/client/fixture.ts";
+import {distanceBetweenVector3s, Vector3} from "../../util/common/vector.ts";
+import {Fixture, PlaceableProp, PrimaryCheckpoint, TrackMetadata} from "../../track/common/track.ts";
+import {wait} from "../../util/common/util.ts";
+import {HOTLAP_COMMANDS} from "../common/command.ts";
 
 // TODO in case a player spawns onto a custom track, the props in immediate radius of the spawn point need to
 //  be loaded and placed first
@@ -31,21 +26,17 @@ import {FIXTURE_REMOVAL_DEFAULTS, hideFixture, unhideFixture} from "../../track/
 
 const log = new ConsoleLogger(PACKAGE_NAME);
 const hotlapState = new ClientHotlapState();
-const playerId = PlayerId();
-const ped = GetPlayerPed(playerId);
 
 // TODO consider including playerCoords in ClientHotlapState, or own ClientGenericState
 let playerCoords: Vector3 | undefined;
 let tickUpdatePlayerCoords: number | undefined;
 
 // start general ticks right away
-if (isUndefined(tickUpdatePlayerCoords)) {
-  startTickUpdatingPlayerCoords(10);
-}
+startTickUpdatingPlayerCoords(10);
 
 // hard-coded command for now
 RegisterCommand(
-  COMMANDS.HOTLAP,
+  HOTLAP_COMMANDS.HOTLAP,
   async (source: number, args: string[]) => handleHotlapCommand(args),
   false
 );
@@ -76,7 +67,7 @@ async function initializeHotlapSession(trackId: number) {
   await resetHotlapState();
 
   // disable traffic
-  if (!isUndefined(playerCoords)) {
+  if (undefined !== playerCoords) {
     await startDisablingTraffic();
   } else {
     log.warn(`Failed to disable traffic (current player coords are undefined)`);
@@ -100,7 +91,6 @@ onNet(EVENTS.HOTLAP.TRACK.PROVIDED.METADATA, async (rawMetadata: string) => {
 });
 
 onNet(EVENTS.HOTLAP.TRACK.PROVIDED.CHECKPOINTS, async (initialCps: string) => {
-  // TODO place the received CPs (curr=[0], next=[1]) (blips & holos)
   let checkpoints: PrimaryCheckpoint[] | undefined = undefined;
 
   try {
@@ -109,7 +99,7 @@ onNet(EVENTS.HOTLAP.TRACK.PROVIDED.CHECKPOINTS, async (initialCps: string) => {
     log.error(`Failed to parse provided checkpoints: ${err}`);
   }
 
-  if (isUndefined(checkpoints)) {
+  if (undefined === checkpoints) {
     log.error(`Failed to setup initial checkpoints: parsed checkpoints undefined`);
     hotlapState.hasCheckpointPlacementError = true;
     return;
@@ -125,7 +115,7 @@ onNet(EVENTS.HOTLAP.TRACK.PROVIDED.PROPS.STATIC, async (rawStaticProps: string) 
   hotlapState.status = HotlapStatus.PLACING_TRACK;
   const staticProps: PlaceableProp[] = JSON.parse(rawStaticProps);
 
-  if (isUndefined(staticProps) || staticProps.length === 0) {
+  if (undefined === staticProps || staticProps.length === 0) {
     log.debug(`Received no static props to place`);
     return;
   }
@@ -154,7 +144,7 @@ onNet(EVENTS.HOTLAP.TRACK.PROVIDED.PROPS.DYNAMIC, async (rawDynamicProps: string
   hotlapState.status = HotlapStatus.PLACING_TRACK;
   const dynamicProps: PlaceableProp[] = JSON.parse(rawDynamicProps);
 
-  if (isUndefined(dynamicProps) || dynamicProps.length === 0) {
+  if (undefined === dynamicProps || dynamicProps.length === 0) {
     log.debug(`Received no dynamic props to place`);
     return;
   }
@@ -183,7 +173,7 @@ onNet(EVENTS.HOTLAP.TRACK.PROVIDED.FIXTURES, async (rawFixtures: string) => {
   hotlapState.status = HotlapStatus.PLACING_TRACK;
   const fixtures: Fixture[] = JSON.parse(rawFixtures);
 
-  if (isUndefined(fixtures) || fixtures.length === 0) {
+  if (undefined === fixtures || fixtures.length === 0) {
     log.debug(`Received no fixtures to remove`);
     return;
   }
@@ -217,7 +207,7 @@ onNet(EVENTS.HOTLAP.ACTIVE.NEXT_CHECKPOINT.RECEIVED, async (nextCp: string) => {
     log.error(`Failed to parse new next checkpoint: ${err}`);
   }
 
-  if (isUndefined(newNextCheckpoint)) {
+  if (undefined === newNextCheckpoint) {
     log.error(`Failed to setup new NextCheckpointState: received next checkpoint is undefined`);
     return;
   }
@@ -227,7 +217,7 @@ onNet(EVENTS.HOTLAP.ACTIVE.NEXT_CHECKPOINT.RECEIVED, async (nextCp: string) => {
   log.debug(`Received new next checkpoint ${JSON.stringify(newNextCheckpoint?.coords)}`);
   await setupNextCheckpointState(newNextCheckpoint);
 
-  if (!isUndefined(oldNextCp)) {
+  if (undefined !== oldNextCp) {
     await setupCurrentCheckpointState(oldNextCp);
   }
 
@@ -237,7 +227,7 @@ onNet(EVENTS.HOTLAP.ACTIVE.NEXT_CHECKPOINT.RECEIVED, async (nextCp: string) => {
 function startTickUpdatingPlayerCoords(intervalMs: number) {
   tickUpdatePlayerCoords = setTick(async () => {
     const [ x, y, z ] = GetEntityCoords(PlayerPedId(), false);
-    if (isUndefined(playerCoords)) {
+    if (undefined === playerCoords) {
       playerCoords = { x: x, y: y, z: z };
     } else {
       playerCoords.x = x;
@@ -256,10 +246,10 @@ async function startUpdatingStaticPropsWithinPlayerRadius(intervalMs: number, de
   );
 
   hotlapState.ticks.updateStaticPropsWithinPlayerRadius = setTick(async () => {
-    if (!isUndefined(playerCoords) && hotlapState.isPlayerNotInFreeMode()) {
+    if (undefined !== playerCoords && hotlapState.isPlayerNotInFreeMode()) {
       for (const prop of hotlapState.staticProps) {
         const propNeedsToBePlaced = !prop.placed
-          && isEntityWithinTargetDistance(prop.coords, playerCoords, detectionRadius);
+          && distanceBetweenVector3s(prop.coords, playerCoords) <= detectionRadius;
 
         if (propNeedsToBePlaced) {
           try {
@@ -267,7 +257,8 @@ async function startUpdatingStaticPropsWithinPlayerRadius(intervalMs: number, de
             prop.placed = true;
             log.trace(
               `Placed static prop (hash=${prop.hash})`
-              + ` at x=${prop.coords.x}, y=${prop.coords.y}, z=${prop.coords.z}`);
+              + ` at x=${prop.coords.x}, y=${prop.coords.y}, z=${prop.coords.z}`
+            );
           } catch (error) {
             log.warn(`Failed to place static prop ${prop.hash} at ${JSON.stringify(prop.coords)}: ${error}`);
           }
@@ -279,7 +270,7 @@ async function startUpdatingStaticPropsWithinPlayerRadius(intervalMs: number, de
 }
 
 function stopUpdatingStaticPropsWithinPlayerRadius() {
-  if (!isUndefined(hotlapState.ticks.updateStaticPropsWithinPlayerRadius)) {
+  if (undefined !== hotlapState.ticks.updateStaticPropsWithinPlayerRadius) {
     try {
       clearTick(hotlapState.ticks.updateStaticPropsWithinPlayerRadius);
       hotlapState.ticks.updateStaticPropsWithinPlayerRadius = undefined;
@@ -297,10 +288,10 @@ async function startUpdatingDynamicPropsWithinPlayerRadius(intervalMs: number, d
   );
 
   hotlapState.ticks.updateDynamicPropsWithinPlayerRadius = setTick(async () => {
-    if (!isUndefined(playerCoords) && hotlapState.isPlayerNotInFreeMode()) {
+    if (undefined !== playerCoords && hotlapState.isPlayerNotInFreeMode()) {
       for (const prop of hotlapState.dynamicProps) {
         const propNeedsToBePlaced = !prop.placed
-          && isEntityWithinTargetDistance(prop.coords, playerCoords, detectionRadius);
+          && distanceBetweenVector3s(prop.coords, playerCoords) <= detectionRadius;
 
         if (propNeedsToBePlaced) {
           try {
@@ -320,7 +311,7 @@ async function startUpdatingDynamicPropsWithinPlayerRadius(intervalMs: number, d
 }
 
 function stopUpdatingDynamicPropsWithinPlayerRadius() {
-  if (!isUndefined(hotlapState.ticks.updateDynamicPropsWithinPlayerRadius)) {
+  if (undefined !== hotlapState.ticks.updateDynamicPropsWithinPlayerRadius) {
     try {
       clearTick(hotlapState.ticks.updateDynamicPropsWithinPlayerRadius);
       hotlapState.ticks.updateDynamicPropsWithinPlayerRadius = undefined;
@@ -338,10 +329,10 @@ async function startUpdatingFixturesWithinPlayerRadius(intervalMs: number, detec
   );
 
   hotlapState.ticks.updateFixturesWithinPlayerRadius = setTick(async () => {
-    if (!isUndefined(playerCoords) && hotlapState.isPlayerNotInFreeMode()) {
+    if (undefined !== playerCoords && hotlapState.isPlayerNotInFreeMode()) {
       for (const fixture of hotlapState.fixtures) {
         const fixtureNeedsToBeRemoved = !fixture.hidden
-          && isEntityWithinTargetDistance(fixture.coords, playerCoords, detectionRadius);
+          && distanceBetweenVector3s(fixture.coords, playerCoords) <= detectionRadius;
 
         if (fixtureNeedsToBeRemoved) {
           try {
@@ -361,7 +352,7 @@ async function startUpdatingFixturesWithinPlayerRadius(intervalMs: number, detec
 }
 
 function stopUpdatingFixturesWithinPlayerRadius() {
-  if (!isUndefined(hotlapState.ticks.updateFixturesWithinPlayerRadius)) {
+  if (undefined !== hotlapState.ticks.updateFixturesWithinPlayerRadius) {
     try {
       clearTick(hotlapState.ticks.updateFixturesWithinPlayerRadius);
       hotlapState.ticks.updateFixturesWithinPlayerRadius = undefined;
@@ -375,23 +366,27 @@ function stopUpdatingFixturesWithinPlayerRadius() {
 function startUpdatingPlayerDistanceToCurrentCheckpoint() {
   log.debug(`Started updating player distance to current checkpoint`);
   hotlapState.ticks.updatePlayerDistanceToCurrentCheckpoint = setTick(async () => {
-    if (!isUndefined(playerCoords) && !isUndefined(hotlapState.currentCp)) {
-      const distanceToCurrentCp = distanceBetweenVector3s(hotlapState.currentCp?.coords, playerCoords);
-      // TODO also take into account the secondary holo
-      // const distanceToCurrentSecondaryCp = distanceBetweenVector3s(
-      //   hotlapState.currentCp?.secondaryCheckpoint?.coords,
-      //   playerCoords
-      // );
-      if (!isUndefined(distanceToCurrentCp)) {
-        hotlapState.playerDistanceToCurrentCp = distanceToCurrentCp;
+    let distance = Number.MAX_SAFE_INTEGER;
+
+    if (undefined !== playerCoords && undefined !== hotlapState.currentCp) {
+      distance = distanceBetweenVector3s(hotlapState.currentCp?.coords, playerCoords);
+
+      if (undefined !== hotlapState.currentCp?.secondaryCheckpoint) {
+        const distanceToSecondaryHolo = distanceBetweenVector3s(
+          hotlapState.currentCp?.secondaryCheckpoint.coords,
+          playerCoords
+        );
+        if (distanceToSecondaryHolo < distance) {
+          distance = distanceToSecondaryHolo;
+        }
       }
+
+      hotlapState.playerDistanceToCurrentCp = distance;
     }
 
-    const isPlayerTouchingCurrentCp = !isUndefined(hotlapState.currentCp?.size)
-      && !isUndefined(hotlapState.playerDistanceToCurrentCp)
-      && hotlapState.playerDistanceToCurrentCp <= (
-        hotlapState.currentCp?.size * CHECKPOINT_DEFAULTS.HOLO.INVISIBLE_TRIGGER_EXTEND
-      );
+    const isPlayerTouchingCurrentCp = undefined !== hotlapState.currentCp?.size
+      && undefined !== hotlapState.playerDistanceToCurrentCp
+      && distance <= (hotlapState.currentCp?.size * CHECKPOINT_DEFAULTS.HOLO.INVISIBLE_TRIGGER_EXTEND);
 
     if (isPlayerTouchingCurrentCp && !hotlapState.hasAlreadyRequestedNextCheckpoint) {
       log.debug(`Player has touched current checkpoint - requesting next one from server`);
@@ -402,7 +397,7 @@ function startUpdatingPlayerDistanceToCurrentCheckpoint() {
 }
 
 function stopUpdatingPlayerDistanceToCurrentCheckpoint() {
-  if (!isUndefined(hotlapState.ticks.updatePlayerDistanceToCurrentCheckpoint)) {
+  if (undefined !== hotlapState.ticks.updatePlayerDistanceToCurrentCheckpoint) {
     try {
       clearTick(hotlapState.ticks.updatePlayerDistanceToCurrentCheckpoint);
       hotlapState.ticks.updatePlayerDistanceToCurrentCheckpoint = undefined;
@@ -424,7 +419,7 @@ async function quitHotlapSession() {
 }
 
 async function resetHotlapState() {
-  if (isUndefined(hotlapState)) {
+  if (undefined === hotlapState) {
     return;
   }
 
@@ -462,7 +457,7 @@ async function resetHotlapState() {
   } else {
     log.debug(`Removing ${hotlapState.dynamicProps.length} props...`);
     hotlapState.dynamicProps.forEach(dp => {
-      if (!isUndefined(dp.ref) && dp.placed) {
+      if (undefined !== dp.ref && dp.placed) {
         removeProp(dp.ref)
           .then(() => dp.placed = false)
           .catch((err) => {
@@ -481,7 +476,7 @@ async function resetHotlapState() {
   } else {
     log.debug(`Removing static props...`);
     hotlapState.staticProps.forEach(sp => {
-      if (!isUndefined(sp.ref) && sp.placed) {
+      if (undefined !== sp.ref && sp.placed) {
         removeProp(sp.ref)
           .then(() => sp.placed = false)
           .catch((err) => {
@@ -503,18 +498,15 @@ async function resetHotlapState() {
     return;
   }
 
-  // TODO clear checkpoints
-  if (!isUndefined(hotlapState.nextCp?.blip)) {
+  if (undefined !== hotlapState.nextCp?.blip) {
     await removeCheckpointBlip(hotlapState.nextCp?.blip);
   }
 
-  if (!isUndefined(hotlapState.currentCp?.blip)) {
+  if (undefined !== hotlapState.currentCp?.blip) {
     await removeCheckpointBlip(hotlapState.currentCp?.blip);
   }
 
-  hotlapState.currentCp?.holos.forEach((holo) => {
-    removeCheckpointHolo(holo);
-  });
+  hotlapState.currentCp?.holos.forEach((holo: number) => removeCheckpointHolo(holo));
 
   hotlapState.fixtures = [];
   hotlapState.dynamicProps = [];
@@ -531,7 +523,7 @@ async function resetHotlapState() {
 
 async function setupNextCheckpointState(cpData: PrimaryCheckpoint) {
   // clear currently set current cp from map (blip + holo)
-  if (!isUndefined(hotlapState.nextCp?.blip)) {
+  if (undefined !== hotlapState.nextCp?.blip) {
     await removeCheckpointBlip(hotlapState.nextCp?.blip);
   }
 
@@ -557,12 +549,12 @@ async function setupNextCheckpointState(cpData: PrimaryCheckpoint) {
 
 async function setupCurrentCheckpointState(cpData: PrimaryCheckpoint) {
   // clear currently set current cp from map (blip + holo)
-  if (!isUndefined(hotlapState.currentCp)) {
+  if (undefined !== hotlapState.currentCp) {
     const holos = hotlapState.currentCp?.holos;
     for (const holo of holos) {
       await removeCheckpointHolo(holo);
     }
-    if (!isUndefined(hotlapState.currentCp?.blip)) {
+    if (undefined !== hotlapState.currentCp?.blip) {
       await removeCheckpointBlip(hotlapState.currentCp?.blip);
     }
   }
@@ -572,20 +564,21 @@ async function setupCurrentCheckpointState(cpData: PrimaryCheckpoint) {
     const newBlip = await drawCheckpointBlip(cpData.coords, true);
 
     const nextCpCoords = hotlapState.nextCp?.coords;
-    if (isUndefined(nextCpCoords)) {
+    if (undefined === nextCpCoords) {
       throw new Error(`Next checkpoint's coords undefined`);
     }
 
     const currentCpHolos: number[] = [];
     const currentCpPrimaryHolo = await drawCheckpointHolo(cpData.coords, cpData.size, nextCpCoords, false);
-    if (!isUndefined(currentCpPrimaryHolo)) {
+    if (undefined !== currentCpPrimaryHolo) {
       currentCpHolos.push(currentCpPrimaryHolo);
     }
 
-    const currentCpSecondaryHolo = isUndefined(cpData.secondaryCheckpoint)
+    const currentCpSecondaryHolo = undefined === cpData.secondaryCheckpoint
       ? undefined
       : await drawCheckpointHolo(cpData.secondaryCheckpoint?.coords, cpData.size, nextCpCoords, true);
-    if (!isUndefined(currentCpSecondaryHolo)) {
+
+    if (undefined !== currentCpSecondaryHolo) {
       currentCpHolos.push(currentCpSecondaryHolo);
     }
 

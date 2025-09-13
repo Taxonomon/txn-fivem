@@ -1,7 +1,6 @@
 import {Fixture, PlaceableProp, PrimaryCheckpoint, Track} from "../common/track.ts";
 import {ConsoleLogger} from "../../logging/common/log.ts";
 import {PACKAGE_NAME} from "../common/package.ts";
-import {CPPSST_TYPES, CppsstType} from "../../hotlap/common/hotlap/cppsst.ts";
 import {
   CPBS1_CHECKPOINT_AIR,
   CPBS1_CHECKPOINT_AIR_SECONDARY,
@@ -10,6 +9,7 @@ import {
 } from "../common/cpbs.ts";
 import {isBitSet} from "../../util/common/util.ts";
 import {FIXTURE_REMOVAL_DEFAULTS} from "../client/fixture.ts";
+import {CPPSST_TYPES, CppsstType} from "../common/cppsst.ts";
 
 const log = new ConsoleLogger(PACKAGE_NAME);
 

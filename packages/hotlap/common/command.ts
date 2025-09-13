@@ -1,5 +1,3 @@
-export const COMMANDS = {
-  CAR: 'car',
-  HOTLAP: 'hotlap',
-  LATVIA: 'latvia'
+export const HOTLAP_COMMANDS = {
+  HOTLAP: 'hotlap'
 };

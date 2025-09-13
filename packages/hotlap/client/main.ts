@@ -1,1 +1,1 @@
-import "./service.ts";
+import "./hotlap.ts";

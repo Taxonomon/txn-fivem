@@ -1,5 +1,3 @@
-import {Vector3} from "../../hotlap/common/hotlap/type.ts";
-
 export function isUndefined(o: any) {
   return typeof o === 'undefined';
 }
@@ -54,16 +52,4 @@ export function isBitSet(x: number, n: number): boolean {
 
 export async function wait(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export function isEntityWithinTargetDistance(entity: Vector3, target: Vector3, radius: number) {
-  return distanceBetweenVector3s(target, entity) <= Math.abs(radius);
-}
-
-export function distanceBetweenVector3s(a: Vector3, b: Vector3) {
-  return Math.sqrt(
-    Math.pow(b.x - a.x, 2)
-    + Math.pow(b.y - a.y, 2)
-    + Math.pow(b.z - a.z, 2)
-  );
 }

@@ -177,7 +177,7 @@
 #times-top-right {
     margin: 20px;
     position: fixed;
-    top: 0;
+    top: 5%;
     right: 0;
 }
 
@@ -199,4 +199,11 @@
 #cp-split {
     position: fixed;
     top: 25%;
+}
+
+#current-time-bottom-left {
+    position: fixed;
+    margin: 20px;
+    top: 0;
+    right: 0;
 }

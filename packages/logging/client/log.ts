@@ -57,8 +57,6 @@ onNet(LOG_EVENTS.TRACE.FROM.SERVER, (message: string) => {
 
 // send log messages to server
 
-// send log messages to client
-
 export function logFatalToServer(message: string) {
   emitNet(LOG_EVENTS.FATAL.FROM.CLIENT, message);
 }

@@ -1,7 +1,7 @@
 import {PACKAGE_NAME} from "../common/package.ts";
-import {wait} from "../../hotlap/common/util.ts";
 import {ConsoleLogger} from "../../logging/common/log.ts";
 import {clientTrafficState} from "./state.ts";
+import {wait} from "../../util/common/util.ts";
 
 const log = new ConsoleLogger(PACKAGE_NAME);
 const HIDE_TRAFFIC_DEFAULTS = {
