@@ -17,7 +17,8 @@ export const EVENTS = {
       NEXT_CHECKPOINT: {
         REQUESTED: 'hotlap:active:next-checkpoint:requested',
         RECEIVED: 'hotlap:active:next-checkpoint:received'
-      }
+      },
+      LAP: 'hotlap:active:lap-finished'
     },
     QUIT: 'hotlap:quit',
     SERVER_LOG: {

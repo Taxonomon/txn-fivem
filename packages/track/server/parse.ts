@@ -27,7 +27,7 @@ const PARSE_DEFAULTS = {
   },
   FIXTURE: {
     RADIUS: {
-      DEFAULT: 500.0
+      DEFAULT: 3.0
     }
   }
 };

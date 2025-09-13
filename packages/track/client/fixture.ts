@@ -28,7 +28,7 @@ export const FIXTURE_REMOVAL_DEFAULTS = {
     // check if fixtures can be removed within this radius to the player
     // 1000.0 is just straight up not working with poles and lamps
     RADIUS: 150.0,
-    INTERVAL_MS: 500
+    INTERVAL_MS: 100
   },
 }
 

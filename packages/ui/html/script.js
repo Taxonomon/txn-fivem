@@ -49,11 +49,14 @@ setInterval(() => updateCurrentTimeEverySecond(), 1000);
 updateCurrentTimeEverySecond();
 
 function updateCurrentTimeEverySecond() {
-  const timestamp = formatTimestamp(new Date());
+  const timestamp = new Date();
+  adjustTimestampTimezoneOffset(timestamp);
+
+  const timestampFormatted = formatTimestamp(timestamp);
   const timeValueElement = document.getElementById(UI_ELEMENT_IDS.CURRENT_TIME);
 
   if (timeValueElement !== null) {
-    timeValueElement.innerText = timestamp && timeValueElement ? timestamp : 'N/A';
+    timeValueElement.innerText = timestampFormatted && timeValueElement ? timestampFormatted : 'N/A';
   }
 }
 
@@ -83,6 +86,14 @@ function hideSecondaryHudIfNotInVehicle(inVehicle) {
 }
 
 function formatTimestamp(timestamp) {
-  // TODO properly format current time: YYYY-MM-DD HH:MM:SS
-  return timestamp.toISOString();
+  return timestamp.toLocaleString('en-uk');
+}
+
+function adjustTimestampTimezoneOffset(timestamp) {
+  const timezoneOffset = timestamp.getTimezoneOffset() / 60;
+  timestamp.setHours(
+    timezoneOffset < 0
+      ? timestamp.getHours() - timezoneOffset
+      : timestamp.getHours() + timezoneOffset
+  );
 }

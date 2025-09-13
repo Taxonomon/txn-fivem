@@ -165,10 +165,16 @@ onNet(EVENTS.HOTLAP.ACTIVE.NEXT_CHECKPOINT.REQUESTED, () => {
   }
 
   const currentCpIndex = hotlappingPlayer?.checkpoint;
+  log.debug(`'${GetPlayerName(playerId)}' has just passed ${currentCpIndex}`);
+
+  if (0 === currentCpIndex) {
+    // client has started/finished their lap
+    emitNet(EVENTS.HOTLAP.ACTIVE.LAP, playerId, []);
+  }
+
   const numberOfCps = cachedTrack?.track.checkpoints.length;
   const lastCpIndex = numberOfCps - 1;
 
-  log.debug(`'${GetPlayerName(playerId)}' has just passed ${currentCpIndex}`);
 
   let cpIndexToFetch;
 

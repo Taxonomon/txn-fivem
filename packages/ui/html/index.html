@@ -12,37 +12,45 @@
   </head>
   <body class="font-figtree font-700 font-size-24 font-white">
     <div id="interface-direct">
-      <div id="times-top-right" class="bg-dark pad-tb-10 pad-lr-20 bor-rad-tl-20 bor-rad-br-20">
-        <div id="times-last" class="mar-b-10">
-          <div id="times-last-label" class="font-size-12">
-            last
+      <div id="interface-direct-top-right">
+        <div id="current-time-bottom-left"
+             class="bg-dark font-size-12 bor-rad-tl-20 bor-rad-br-20 pad-all-10 min-width-200 flex flex-center-hor">
+          <div id="current-time-bottom-left-value">
+            N/A
           </div>
-          <span id="times-last-time">
+        </div>
+        <div id="times-top-right" class="bg-dark mar-t-20 pad-tb-10 pad-lr-20 bor-rad-tl-20 bor-rad-br-20">
+          <div id="times-last" class="mar-b-10">
+            <div id="times-last-label" class="font-size-12">
+              last
+            </div>
+            <span id="times-last-time">
             --
           </span>
-        </div>
-        <div id="times-average" class="mar-b-10">
-          <div id="times-average-label" class="font-size-12">
-            average
           </div>
-          <span id="times-average-time">
+          <div id="times-average" class="mar-b-10">
+            <div id="times-average-label" class="font-size-12">
+              average
+            </div>
+            <span id="times-average-time">
             --
           </span>
-        </div>
-        <div id="times-best" class="mar-b-10">
-          <div id="times-best-label" class="font-size-12">
-            best
           </div>
-          <span id="times-best-time">
+          <div id="times-best" class="mar-b-10">
+            <div id="times-best-label" class="font-size-12">
+              best
+            </div>
+            <span id="times-best-time">
             1:23.987
           </span>
-        </div>
-        <div id="times-record">
-          <div id="times-record-label" class="font-size-12">
-            record
           </div>
-          <div id="times-record-time">
-            1:23.168
+          <div id="times-record">
+            <div id="times-record-label" class="font-size-12">
+              record
+            </div>
+            <div id="times-record-time">
+              1:23.168
+            </div>
           </div>
         </div>
       </div>
@@ -97,16 +105,6 @@
                class="bg-mid bg-red pad-tb-10 pad-lr-14 bor-rad-br-20 flex flex-center-ver">
             250 kmh
           </div>
-        </div>
-      </div>
-      <!--
-        TODO group current time with times top right and use proper padding
-         instead of placing both divs absolute
-      -->
-      <div id="current-time-bottom-left"
-           class="bg-dark font-size-12 bor-rad-tl-20 bor-rad-br-20 pad-all-20 min-width-200 flex flex-center-hor">
-        <div id="current-time-bottom-left-value">
-          N/A
         </div>
       </div>
     </div>
